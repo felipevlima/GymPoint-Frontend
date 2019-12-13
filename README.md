@@ -2,15 +2,26 @@
   GymPoint Web
 </h3>
 
+<h4 align="center">
+  ATENÇÃO! </br>
+  Esse projeto precisa do back-end rodando em conjunto!
+</h4>
 <p align="center">WEB Version: 1.0.0-alpha</p>
 
+### :outbox_tray: Back-end
+
+* Acesse o [repositorio do back-end](https://github.com/felipevlima/GymPoint-Backend/tree/master) e baixe a ultima versão
+* Execute com o tutorial descirto no README.md do repositorio.
+
 ### :computer: Run
+
+* Para inicializar o projeto
 
 ```bash
 yarn start
 ```
 
-Abra [http://localhost:3000](http://localhost:3000) para vizualizar no navegador.
+* Abra [http://localhost:3000](http://localhost:3000) para vizualizar no navegador.
 
 
 ## 🤔 Como contribuir
