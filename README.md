@@ -1,4 +1,4 @@
-h3 align="center">
+<h3 align="center">
   GymPoint Web
 </h3>
 
