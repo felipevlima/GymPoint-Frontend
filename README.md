@@ -6,10 +6,11 @@
   GymPoint Web
 </h3>
 
-<h4 align="center" styles="color: red">
+<h4 align="center">
   ATENÇÃO! </br>
-  Esse projeto precisa do back-end rodando em conjunto!
+  !!! Esse projeto precisa do back-end rodando em conjunto !!!
 </h4>
+
 <p align="center">WEB Version: 1.0.0-alpha</p>
 
 ### :outbox_tray: Back-end
