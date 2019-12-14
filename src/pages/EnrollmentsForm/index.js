@@ -31,12 +31,13 @@ export default function EnrollmentsForm() {
 
   const schema = Yup.object().shape({
     name: Yup.string().required('Nome é obrigatório!'),
-    plan_name: Yup.string().required('Plano é obrigatório!'),
+    plan: Yup.string().required('Plano é obrigatório!'),
     start_date: Yup.string().required('Data é obrigatoria!'),
   });
 
   async function handleSubmit(data) {
     try {
+      console.log(data);
       await api.post('/enrollments', {
         student_id: data.student.id,
         plan_id: data.plan.id,

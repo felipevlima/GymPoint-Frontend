@@ -45,7 +45,7 @@ export const Header = styled.div`
   }
 `;
 
-export const Search = styled.form`
+export const Search = styled.div`
   display: flex;
   align-items: center;
   max-width: 237px;

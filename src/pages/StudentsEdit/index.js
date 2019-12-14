@@ -87,6 +87,6 @@ export default function StudentsEdit({ match }) {
   );
 }
 
-StudentsEdit.propTypes = {
-  match: PropTypes.element.isRequired,
-};
+// StudentsEdit.propTypes = {
+//   id: PropTypes.element,
+// };

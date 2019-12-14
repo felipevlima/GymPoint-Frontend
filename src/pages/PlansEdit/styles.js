@@ -68,7 +68,7 @@ export const Nav = styled.div`
   }
 `;
 
-export const FormInserts = styled.form`
+export const FormInserts = styled.div`
   padding: 30px;
   background: #fff;
   border-radius: 4px;

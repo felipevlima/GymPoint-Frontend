@@ -93,6 +93,6 @@ export default function PlansEdit({ match }) {
   );
 }
 
-PlansEdit.propTypes = {
-  match: PropTypes.element.isRequired,
-};
+// PlansEdit.propTypes = {
+//   match: PropTypes.element.isRequired,
+// };

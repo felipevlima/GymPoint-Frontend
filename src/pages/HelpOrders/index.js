@@ -12,6 +12,8 @@ import Box from '../../components/Box';
 
 export default function HelpOrders() {
   const schema = Yup.object().shape({
+    name: Yup.string(),
+    id: Yup.string(),
     answer: Yup.string().required('Resposta é obrigatória!'),
   });
 
@@ -27,6 +29,7 @@ export default function HelpOrders() {
   }, []);
 
   async function handleAwnser(data) {
+    console.log(data);
     await api.post(`/admin/help-orders/${data.id}/answer`, data);
     toast.success('Resposta enviada com sucesso');
     history.push('/helporders');
@@ -61,16 +64,22 @@ export default function HelpOrders() {
                     >
                       <div>
                         <div>
-                          <strong>Aluno:</strong>
+                          <strong>ALUNO:</strong>
                           <Input
                             name="name"
                             disabled
                             placeholder={help.student.name}
+                            // value={help.student.name}
                           />
                         </div>
                         <div>
-                          <strong>NUMERO DA PERGUNTA:</strong>
-                          <Input name="id" disabled placeholder={help.id} />
+                          <strong>Numero da pergunta:</strong>
+                          <Input
+                            name="id"
+                            disabled
+                            placeholder={help.id}
+                            // value={help.id}
+                          />
                         </div>
                       </div>
                       <strong>PERGUNTA DO ALUNO</strong>
@@ -91,9 +100,6 @@ export default function HelpOrders() {
             </Help>
           ))
         )}
-        {/* {helpOrders.map(help => (
-
-        ))} */}
       </Box>
     </Container>
   );
