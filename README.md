@@ -18,6 +18,21 @@
 * Acesse o [repositorio do back-end](https://github.com/felipevlima/GymPoint-Backend/tree/master) e baixe a ultima versão
 * Execute com o tutorial descirto no README.md do repositorio.
 
+### :computer: Configurando
+
+* Configure a URL do back-end:
+
+```bash
+-> Acesse .env
+-> Altere o BASE_URL para o endereço do backend
+```
+
+* Para instalar os módulos:
+
+```bash
+yarn
+```
+
 ### :computer: Run
 
 * Para inicializar o projeto
