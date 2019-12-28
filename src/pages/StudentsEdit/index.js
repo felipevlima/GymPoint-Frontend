@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Form, Input } from '@rocketseat/unform';
 import { MdCheck, MdChevronLeft } from 'react-icons/md';
-import PropTypes from 'prop-types';
 
 import { Container, Nav, FormInserts, NumbersDiv, StringDiv } from './styles';
 import api from '../../services/api';

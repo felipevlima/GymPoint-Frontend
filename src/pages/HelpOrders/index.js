@@ -29,7 +29,6 @@ export default function HelpOrders() {
   }, []);
 
   async function handleAwnser(data) {
-    console.log(data);
     await api.post(`/admin/help-orders/${data.id}/answer`, data);
     toast.success('Resposta enviada com sucesso');
     history.push('/helporders');

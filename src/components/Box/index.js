@@ -18,6 +18,10 @@ const Box = styled.div`
   label {
     margin-bottom: 8px;
   }
+
+  input {
+    height: 45px;
+  }
 `;
 
 export default Box;

@@ -5,7 +5,7 @@ import Select from 'react-select';
 
 import { Container } from './styles';
 
-export default function ReactSelect({ name, options, setChange }) {
+export default function ReactSelect({ name, options, setChange, ...rest }) {
   const { fieldName, registerField, defaultValue, error } = useField(name);
   const [value, setValue] = useState(defaultValue && defaultValue);
   const ref = useRef();
@@ -38,6 +38,7 @@ export default function ReactSelect({ name, options, setChange }) {
         onChange={handleChange}
         ref={ref}
         className="selectInput"
+        {...rest}
       />
 
       {error && <span>{error}</span>}

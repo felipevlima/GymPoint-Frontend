@@ -1,75 +1,42 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useState, useEffect, useMemo } from 'react';
-import * as Yup from 'yup';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { Form, Input } from '@rocketseat/unform';
-
-import { format, addMonths } from 'date-fns';
-import pt from 'date-fns/locale/pt-BR';
-
 import { MdCheck, MdClose } from 'react-icons/md';
+import { Form, Input } from '@rocketseat/unform';
+import * as Yup from 'yup';
+import { toast } from 'react-toastify';
+
+import pt from 'date-fns/locale/pt';
+import { format, addMonths } from 'date-fns';
+import moment from 'moment';
+
+import Box from '~/components/Box';
 import DatePicker from '~/components/DatePicker';
-import InputAsyncSelect from '~/components/InputSelect';
-import InputSelectPlans from '~/components/InputSelectPlans';
-import { formatPrice } from '~/utils/format';
+import InputSelect from '~/components/InputSelect';
+import InputSelectPlan from '~/components/InputSelectPlans';
 
 import api from '../../services/api';
 import history from '../../services/history';
+import { formatPrice } from '~/utils/format';
 
-import 'react-datepicker/dist/react-datepicker.css';
-
-import Box from '~/components/Box';
-
-import { Nav, InputFilds } from './styles';
+import { Container, Header, ColumnFilds, InLineFilds } from './styles';
 
 export default function EnrollmentsForm() {
-  const [plans, setPlans] = useState({});
+  const schema = Yup.object().shape({
+    student: Yup.string().required('Aluno obrigatório'),
+    plan: Yup.string().required('Aluno obrigatório'),
+    start_date: Yup.date().required('Data obrigatória'),
+  });
+
+  const [students, setStudents] = useState({});
+  const [student, setStudent] = useState({});
   const [startDate, setStartDate] = useState(new Date());
+  const [plans, setPlans] = useState({});
   const [plan, setPlan] = useState({});
   const [initialData, setInitialData] = useState({});
 
-  const schema = Yup.object().shape({
-    name: Yup.string().required('Nome é obrigatório!'),
-    plan: Yup.string().required('Plano é obrigatório!'),
-    start_date: Yup.string().required('Data é obrigatoria!'),
-  });
-
-  async function handleSubmit(data) {
-    try {
-      console.log(data);
-      await api.post('/enrollments', {
-        student_id: data.student.id,
-        plan_id: data.plan.id,
-        start_date: data.start_date,
-      });
-      toast.success('Matrícula realizada com sucesso!');
-      history.push('/enrollments');
-    } catch (erro) {
-      toast.error(erro.response.data.error);
-    }
-  }
-
-  async function loadOptions(inputValue) {
-    const response = await api
-      .get('students', {
-        params: { name: `${inputValue}` },
-      })
-      .then(r => r.data)
-      .then(r =>
-        r.map(student => ({
-          label: student.name,
-          value: student.id,
-        }))
-      );
-    return response;
-  }
-
   async function loadPlans() {
     const response = await api
-      .get('plans', {
-        params: { page: 1, per_page: 100 },
-      })
+      .get('plans')
       .then(r => r.data)
       .then(d =>
         d.map(p => ({
@@ -77,10 +44,25 @@ export default function EnrollmentsForm() {
           value: p.id,
           duration: p.duration,
           price: p.price,
+          total_price: p.totalPrice,
         }))
       );
 
     setPlans(response);
+  }
+
+  async function loadStudents() {
+    const response = await api
+      .get('students')
+      .then(r => r.data)
+      .then(d =>
+        d.map(s => ({
+          label: s.name,
+          value: s.id,
+        }))
+      );
+
+    setStudents(response);
   }
 
   const end_date = useMemo(() => {
@@ -98,71 +80,98 @@ export default function EnrollmentsForm() {
     return formattedDate;
   }, [plan, startDate]);
 
-  const totalPrice = useMemo(() => {
-    if (!plan.price) return '';
+  const formatDate = moment(startDate).toISOString();
 
-    return formatPrice(Number(plan.duration) * Number(plan.price));
-  }, [plan.duration, plan.price]);
+  const totalPrice = useMemo(() => {
+    if (!plan.total_price) {
+      return '';
+    }
+    const { total_price } = plan;
+    const format_Price = formatPrice(total_price);
+
+    return format_Price;
+  }, [plan]);
 
   useEffect(() => {
     loadPlans();
+    loadStudents();
 
     setInitialData({
       end_date,
       totalPrice,
     });
-  }, [end_date, startDate, totalPrice]);
+  }, [end_date, startDate, totalPrice]);// eslint-disable-line
+
+  async function handleSubmit() {
+    const studentId = student.value;
+    const planId = plan.value;
+
+    try {
+      await api.post('/enrollments', {
+        student_id: studentId,
+        plan_id: planId,
+        start_date: formatDate,
+      });
+      toast.success('Matrícula realizada com sucesso!');
+    } catch (erro) {
+      toast.error('Matrícula já existe no sistema!');
+    } finally {
+      history.push('/enrollments');
+    }
+  }
 
   return (
-    <Form schema={schema} onSubmit={handleSubmit} initialData={initialData}>
-      <Nav>
-        <strong>Cadastro de matrícula</strong>
-        <div>
+    <Container>
+      <Form onSubmit={handleSubmit} schema={schema} initialData={initialData}>
+        <Header>
+          <strong>Cadastro de plano</strong>
           <div>
-            <Link to="/enrollments">
-              <MdClose size={20} color="#FFF" />
-              CANCELAR
-            </Link>
+            <div>
+              <Link to="/enrollments">
+                <MdClose size={20} color="#FFF" />
+                CANCELAR
+              </Link>
+            </div>
+            <button type="submit" onClick={handleSubmit}>
+              <MdCheck size={18} color="#FFF" />
+              SALVAR
+            </button>
           </div>
-          <button type="submit">
-            <MdCheck size={18} color="#FFF" />
-            SALVAR
-          </button>
-        </div>
-      </Nav>
-
-      <Box>
-        <InputAsyncSelect
-          name="student"
-          loadOptions={loadOptions}
-          label="ALUNO"
-        />
-
-        <InputFilds>
-          <div className="formline">
-            <label>
-              <strong>PLANO</strong>
-              <InputSelectPlans
+        </Header>
+        <Box>
+          <strong>Nome</strong>
+          <InputSelect
+            name="student"
+            options={students}
+            setChange={setStudent}
+          />
+          <InLineFilds>
+            <ColumnFilds>
+              <strong>Plano</strong>
+              <InputSelectPlan
                 name="plan"
                 options={plans}
                 setChange={setPlan}
+                getOptionLabel={option => option.title}
               />
-            </label>
-            <label>
-              <strong>DATA DE INÍCIO</strong>
-              <DatePicker name="start_date" setChange={setStartDate} />
-            </label>
-            <label>
-              <strong>DATA DE TÉRMINO</strong>
-              <Input name="end_date" readOnly className="readOnly" />
-            </label>
-            <label>
-              <strong>VALOR FINAL</strong>
-              <Input name="totalPrice" readOnly className="readOnly" />
-            </label>
-          </div>
-        </InputFilds>
-      </Box>
-    </Form>
+            </ColumnFilds>
+            <ColumnFilds>
+              <strong>Data</strong>
+              <>
+                <DatePicker name="date" setChange={setStartDate} />
+              </>
+            </ColumnFilds>
+            <ColumnFilds>
+              <strong>Data final</strong>
+              <Input ntype="data" name="end_date" readOnly disabled />
+            </ColumnFilds>
+            <ColumnFilds>
+              <strong>Valor Total</strong>
+              <Input type="text" name="totalPrice" readOnly disabled />
+            </ColumnFilds>
+          </InLineFilds>
+        </Box>
+      </Form>
+    </Container>
   );
 }

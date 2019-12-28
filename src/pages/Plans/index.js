@@ -41,8 +41,7 @@ export default function Plans() {
   useEffect(() => {
     async function listPlans() {
       const response = await api.get('plans');
-      const apiFilter = response.data;
-      const data = apiFilter.map(plan => ({
+      const data = response.data.map(plan => ({
         ...plan,
         durationFormatted:
           plan.duration === 1

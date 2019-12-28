@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Form, Input } from '@rocketseat/unform';
 import { MdCheck, MdChevronLeft } from 'react-icons/md';
-import PropTypes from 'prop-types';
+
 import { formatPrice } from '~/utils/format';
 
 import { Container, Nav, FormInserts, NumbersDiv, StringDiv } from './styles';
@@ -92,7 +92,3 @@ export default function PlansEdit({ match }) {
     </Container>
   );
 }
-
-// PlansEdit.propTypes = {
-//   match: PropTypes.element.isRequired,
-// };
