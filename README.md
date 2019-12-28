@@ -20,13 +20,6 @@
 
 ### :computer: Configurando
 
-* Configure a URL do back-end:
-
-```bash
--> Acesse .env
--> Altere o BASE_URL para o endereço do backend
-```
-
 * Para instalar os módulos:
 
 ```bash
