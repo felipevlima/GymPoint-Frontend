@@ -5,10 +5,8 @@ import { Input, Form } from '@rocketseat/unform';
 import { toast } from 'react-toastify';
 import history from '../../services/history';
 
-import { Container, Header, Help } from './styles';
+import { Container, Header, Help, Box } from './styles';
 import api from '../../services/api';
-
-import Box from '../../components/Box';
 
 export default function HelpOrders() {
   const schema = Yup.object().shape({
