@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import Boxi from '../../components/Box';
 
 export const Container = styled.div`
   margin: 34px 300px;
@@ -77,7 +78,6 @@ export const Help = styled.ul`
           border-bottom: 1px solid #eee;
           margin-bottom: 20px;
 
-
           div {
             border: none;
             margin-bottom: 0;
@@ -91,8 +91,6 @@ export const Help = styled.ul`
               color: #666;
             }
           }
-        }
-
         }
 
         input {
@@ -118,7 +116,7 @@ export const Help = styled.ul`
           height: 150px;
 
           &:focus {
-              border: 1px solid #ee4d64;
+            border: 1px solid #ee4d64;
           }
         }
 
@@ -133,4 +131,8 @@ export const Help = styled.ul`
       }
     }
   }
+`;
+
+export const Box = styled(Boxi)`
+  height: 550px;
 `;

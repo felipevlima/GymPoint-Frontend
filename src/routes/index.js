@@ -6,18 +6,18 @@ import Route from './Route';
 import SignIn from '../pages/SignIn';
 
 import Enrollments from '../pages/Enrollments';
-import EnrollmentsForm from '../pages/EnrollmentsForm';
-import EnrollmentsEdit from '../pages/EnrollmentsEdit';
+import EnrollmentsForm from '../pages/Enrollments/EnrollmentsForm';
+import EnrollmentsEdit from '../pages/Enrollments/EnrollmentsEdit';
 
 import HelpOrders from '../pages/HelpOrders';
 
 import Plans from '../pages/Plans';
-import PlansForm from '../pages/PlansForm';
-import PlansEdit from '../pages/PlansEdit';
+import PlansForm from '../pages/Plans/PlansForm';
+import PlansEdit from '../pages/Plans/PlansEdit';
 
 import Students from '../pages/Students';
-import StudentsForm from '../pages/StudentsForm';
-import StudentsEdit from '../pages/StudentsEdit';
+import StudentsForm from '../pages/Students/StudentsForm';
+import StudentsEdit from '../pages/Students/StudentsEdit';
 
 export default function Routes() {
   return (

@@ -6,6 +6,7 @@ export const Container = styled.div`
 
   min-width: 200px;
   max-width: 240px;
+
   .selectInput {
     height: 45px;
     min-width: 200px;

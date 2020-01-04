@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { MdAdd } from 'react-icons/md';
 import { Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
+
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 import { formatPrice } from '../../utils/format';
 
@@ -20,6 +22,8 @@ import {
 export default function Plans() {
   const [plans, setPlans] = useState([]);
   const [updatePlans, setUpdatePlans] = useState(false);
+
+  const MySwal = withReactContent(Swal);
 
   useEffect(() => {
     async function listPlans() {
@@ -56,14 +60,22 @@ export default function Plans() {
   }, [updatePlans]);
 
   async function deletePlans(id) {
-    try {
-      await api.delete(`plans/${id}`);
-      toast.success('Plano deletado com sucesso!');
-    } catch (erro) {
-      toast.error('Plano contem usuários atívos!');
-    } finally {
-      setUpdatePlans(true);
-    }
+    MySwal.fire({
+      title: 'Você tem certeza?',
+      text: 'Você não irá poder desfazer essa alteração!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sim, deletar!',
+      cancelButtonText: 'Cancelar',
+    }).then(result => {
+      if (result.value) {
+        api.delete(`plans/${id}`);
+        Swal.fire('Deletado!', 'O plano foi deletado com sucesso!', 'success');
+        setUpdatePlans(true);
+      }
+    });
   }
 
   return (

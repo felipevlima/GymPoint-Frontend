@@ -10,6 +10,7 @@ export const Container = styled.div`
     height: 45px;
     justify-content: center;
     input {
+      /* padding: 5px; */
       height: 35px;
     }
   }

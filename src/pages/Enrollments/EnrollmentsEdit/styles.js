@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import InputSelect from '~/components/InputSelect';
 
 export const Container = styled.div`
   margin-top: 34px;
@@ -101,4 +102,8 @@ export const InLineFilds = styled.div`
   flex-direction: row;
 
   justify-content: space-between;
+`;
+
+export const InputSelectPlan = styled(InputSelect)`
+  max-width: 120px;
 `;

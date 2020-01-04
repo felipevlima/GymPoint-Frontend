@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { MdAdd, MdSearch } from 'react-icons/md';
 import { Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
+
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 import { Form, Input } from '@rocketseat/unform';
 
@@ -21,44 +23,59 @@ import {
 export default function Students() {
   const [students, setStudents] = useState([]);
   const [updateStudent, setUpdateStudent] = useState(false);
-  // const [name, setName] = useState('');
+  const [search, setSearch] = useState('');
 
-  async function loadStudents() {
-    const response = await api.get('students');
-    const apiFilter = response.data;
-    setStudents(apiFilter);
-  }
+  const MySwal = withReactContent(Swal);
 
   useEffect(() => {
+    async function loadStudents() {
+      const response = await api.get(`students?q=${search}`);
+      setStudents(response.data);
+    }
+
     loadStudents();
-  }, []);
+  }, [search]);
 
   useEffect(() => {
     async function listStudent() {
-      const response = await api.get('students');
-      const apiFilter = response.data;
+      const response = await api.get(`students?q=${search}`);
 
-      setStudents(apiFilter);
+      setStudents(response.data);
       setUpdateStudent(false);
     }
     listStudent();
-  }, [updateStudent]);
+  }, [search, updateStudent]);
 
   async function deleteStudent(id) {
-    try {
-      await api.delete(`students/${id}`);
-      toast.success('Usuário deletado');
-    } catch (erro) {
-      toast.error('Usuário está com um plano ativo');
-    } finally {
-      setUpdateStudent(true);
-    }
+    MySwal.fire({
+      title: 'Você tem certeza?',
+      text: 'Você não irá poder desfazer essa alteração!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sim, deletar!',
+      cancelButtonText: 'Cancelar',
+    }).then(result => {
+      if (result.value) {
+        api.delete(`students/${id}`);
+        Swal.fire(
+          'Deletado!',
+          'O estudante foi deletado com sucesso!',
+          'success'
+        );
+        setUpdateStudent(true);
+      }
+    });
   }
 
-  function handleSearch({ nameSearch }) {
-    // setName(nameSearch);
-    loadStudents();
-  }
+  const handleSearch = event => {
+    const { value } = event.target;
+
+    if (value.length >= 2 || value.length === 0) {
+      setSearch(event.target.value);
+    }
+  };
 
   return (
     <Container>
@@ -76,7 +93,11 @@ export default function Students() {
           <Form>
             <Search onSubmit={handleSearch}>
               <MdSearch size={16} color="#999" />
-              <Input name="nameSearch" placeholder="Buscar aluno" />
+              <Input
+                name="nameSearch"
+                placeholder="Buscar aluno"
+                onChange={handleSearch}
+              />
             </Search>
           </Form>
         </div>

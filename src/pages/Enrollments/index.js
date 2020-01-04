@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { MdAdd, MdSearch, MdCheckCircle } from 'react-icons/md';
 import { Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
+
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 import { parseISO, format } from 'date-fns';
 import pt from 'date-fns/locale/pt-BR';
@@ -22,38 +24,61 @@ import {
 export default function Enrollments() {
   const [enrollments, setEnrollments] = useState([]);
   const [updateEnrollments, setUpdateEnrollments] = useState(false);
+  const [search, setSearch] = useState('');
+
+  const MySwal = withReactContent(Swal);
 
   useEffect(() => {
     async function listEnrollments() {
-      const response = await api.get('enrollments');
-      const apiFilter = response.data.enrolments;
+      const response = await api.get(`enrollments?q=${search}`);
+      const apiFilter = response.data;
 
       setEnrollments(apiFilter);
     }
     listEnrollments();
-  }, [enrollments.student]);
+  }, [enrollments.student, search]);
 
   useEffect(() => {
     async function listEnrollments() {
-      const response = await api.get('enrollments');
-      const apiFilter = response.data.enrolments;
+      const response = await api.get(`enrollments?q=${search}`);
+      const apiFilter = response.data;
 
       setEnrollments(apiFilter);
       setUpdateEnrollments(false);
     }
     listEnrollments();
-  }, [updateEnrollments]);
+  }, [search, updateEnrollments]);
 
   async function deleteEnrollment(id) {
-    try {
-      await api.delete(`enrollments/${id}`);
-      toast.success('Matrícula deletada com sucesso!');
-    } catch (erro) {
-      toast.error('Error ao deletar matrícula!');
-    } finally {
-      setUpdateEnrollments(true);
-    }
+    MySwal.fire({
+      title: 'Você tem certeza?',
+      text: 'Você não irá poder desfazer essa alteração!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sim, deletar!',
+      cancelButtonText: 'Cancelar',
+    }).then(result => {
+      if (result.value) {
+        api.delete(`enrollments/${id}`);
+        Swal.fire(
+          'Deletado!',
+          'A matricula foi deletado com sucesso!',
+          'success'
+        );
+        setUpdateEnrollments(true);
+      }
+    });
   }
+
+  const handleSearch = event => {
+    const { value } = event.target;
+
+    if (value.length >= 2 || value.length === 0) {
+      setSearch(event.target.value);
+    }
+  };
 
   return (
     <Container>
@@ -70,7 +95,11 @@ export default function Enrollments() {
           </button>
           <Search>
             <MdSearch size={16} color="#999" />
-            <input type="text" placeholder="Buscar matrícula" />
+            <input
+              type="text"
+              placeholder="Buscar matrícula"
+              onChange={handleSearch}
+            />
           </Search>
         </div>
       </Header>

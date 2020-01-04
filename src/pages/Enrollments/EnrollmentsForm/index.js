@@ -1,49 +1,38 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { MdCheck, MdClose } from 'react-icons/md';
 import { Form, Input } from '@rocketseat/unform';
-import moment from 'moment';
+import * as Yup from 'yup';
+import { toast } from 'react-toastify';
 
-import { parseISO, format, addMonths } from 'date-fns';
 import pt from 'date-fns/locale/pt';
-
-import api from '~/services/api';
-import { formatPrice } from '~/utils/format';
+import { format, addMonths } from 'date-fns';
+import moment from 'moment';
 
 import Box from '~/components/Box';
 import DatePicker from '~/components/DatePicker';
 import InputSelect from '~/components/InputSelect';
 import InputSelectPlan from '~/components/InputSelectPlans';
-import AsyncSelect from '~/components/AsyncSelect';
+
+import api from '~/services/api';
+import history from '~/services/history';
+import { formatPrice } from '~/utils/format';
 
 import { Container, Header, ColumnFilds, InLineFilds } from './styles';
 
-export default function EnrollmentsEdit({ match }) {
-  const { id } = match.params;
+export default function EnrollmentsForm() {
+  const schema = Yup.object().shape({
+    student: Yup.string().required('Aluno obrigatório'),
+    plan: Yup.string().required('Aluno obrigatório'),
+    start_date: Yup.date().required('Data obrigatória'),
+  });
 
-  const [enrollment, setEnrollment] = useState(null);
   const [students, setStudents] = useState({});
   const [student, setStudent] = useState({});
   const [startDate, setStartDate] = useState(new Date());
   const [plans, setPlans] = useState({});
   const [plan, setPlan] = useState({});
   const [initialData, setInitialData] = useState({});
-
-  async function loadEnrrolment(id) {
-    const response = await api.get(`enrollments/${id}`);
-    const { data } = response;
-
-    const formattedDate = format(parseISO(data.start_date), `dd'/'MM'/'yyyy`);
-
-    setEnrollment({
-      ...data,
-      start_date: formattedDate,
-    });
-
-    setStartDate(formattedDate);
-    setStudent(data.student);
-    setPlan(data.plan);
-  }
 
   async function loadPlans() {
     const response = await api
@@ -81,8 +70,13 @@ export default function EnrollmentsEdit({ match }) {
       return '';
     }
     const { duration } = plan;
-    const formattedDate = addMonths(startDate, duration);
-
+    const formattedDate = format(
+      addMonths(startDate, duration),
+      "dd'/'MM'/'yyyy",
+      {
+        locale: pt,
+      }
+    );
     return formattedDate;
   }, [plan, startDate]);
 
@@ -99,8 +93,6 @@ export default function EnrollmentsEdit({ match }) {
   }, [plan]);
 
   useEffect(() => {
-    loadEnrrolment(id);
-
     loadPlans();
     loadStudents();
 
@@ -108,11 +100,29 @@ export default function EnrollmentsEdit({ match }) {
       end_date,
       totalPrice,
     });
-  }, [end_date, id, totalPrice]);
+  }, [end_date, startDate, totalPrice]);// eslint-disable-line
+
+  async function handleSubmit() {
+    const studentId = student.value;
+    const planId = plan.value;
+
+    try {
+      await api.post('/enrollments', {
+        student_id: studentId,
+        plan_id: planId,
+        start_date: formatDate,
+      });
+      toast.success('Matrícula realizada com sucesso!');
+    } catch (erro) {
+      toast.error('Matrícula já existe no sistema!');
+    } finally {
+      history.push('/enrollments');
+    }
+  }
 
   return (
     <Container>
-      <Form onSubmit={() => {}} schema="" initialData="">
+      <Form onSubmit={handleSubmit} schema={schema} initialData={initialData}>
         <Header>
           <strong>Cadastro de plano</strong>
           <div>
@@ -122,7 +132,7 @@ export default function EnrollmentsEdit({ match }) {
                 CANCELAR
               </Link>
             </div>
-            <button type="submit" onClick={() => {}}>
+            <button type="submit" onClick={handleSubmit}>
               <MdCheck size={18} color="#FFF" />
               SALVAR
             </button>
@@ -131,17 +141,14 @@ export default function EnrollmentsEdit({ match }) {
         <Box>
           <strong>Nome</strong>
           <InputSelect
-            placeholder="Digite o nome do aluno..."
             name="student"
             options={students}
             setChange={setStudent}
-            defaultValue={student}
           />
           <InLineFilds>
             <ColumnFilds>
               <strong>Plano</strong>
               <InputSelectPlan
-                placeholder="Escolha o plano..."
                 name="plan"
                 options={plans}
                 setChange={setPlan}
@@ -150,11 +157,7 @@ export default function EnrollmentsEdit({ match }) {
             <ColumnFilds>
               <strong>Data</strong>
               <>
-                <DatePicker
-                  name="date"
-                  setChange={setStartDate}
-                  value={startDate}
-                />
+                <DatePicker name="date" setChange={setStartDate} />
               </>
             </ColumnFilds>
             <ColumnFilds>

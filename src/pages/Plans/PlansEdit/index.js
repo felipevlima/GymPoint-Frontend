@@ -8,9 +8,9 @@ import { formatPrice } from '~/utils/format';
 import { Container, Nav, FormInserts, NumbersDiv, StringDiv } from './styles';
 import Mask from '~/components/InputMask';
 
-import api from '../../services/api';
+import api from '~/services/api';
 
-import history from '../../services/history';
+import history from '~/services/history';
 
 export default function PlansEdit({ match }) {
   const { id } = match.params;

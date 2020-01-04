@@ -1,45 +1,49 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Form, Input } from '@rocketseat/unform';
-import { MdCheck, MdChevronLeft } from 'react-icons/md';
+import * as Yup from 'yup';
+import { toast } from 'react-toastify';
+
+import { MdCheck, MdClose } from 'react-icons/md';
 
 import { Container, Nav, FormInserts, NumbersDiv, StringDiv } from './styles';
-import api from '../../services/api';
+import api from '~/services/api';
 
-import history from '../../services/history';
+import history from '~/services/history';
 
-export default function StudentsEdit({ match }) {
-  const { id } = match.params;
-
-  const [student, setStudent] = useState();
+export default function StudentsForm() {
+  const schema = Yup.object().shape({
+    name: Yup.string().required('O nome é obrigatório'),
+    email: Yup.string()
+      .email('Insira um e-mail válido')
+      .required('O e-mail é obrigatório'),
+    age: Yup.string().required('A idade é obrigatória'),
+    weight: Yup.string().required('O peso é obrigatório'),
+    height: Yup.string().required('A altura é obrigatória'),
+  });
 
   async function handleSubmit(data) {
-    await api.put(`/students/${id}`, data);
-    history.push('/students');
-  }
-
-  useEffect(() => {
-    async function getStudent() {
-      const response = await api.get(`students/${id}`);
-
-      setStudent(response.data);
+    try {
+      await api.post('/students', data);
+      history.push('/students');
+    } catch (erro) {
+      toast.error('Preencha todos os dados corretamente.');
     }
-    getStudent();
-  }, [id]);
+  }
 
   return (
     <Container>
-      <Form onSubmit={handleSubmit} initialData={student}>
+      <Form schema={schema} onSubmit={handleSubmit}>
         <Nav>
-          <strong>Edição de aluno</strong>
+          <strong>Cadastro de aluno</strong>
           <div>
             <div>
               <Link to="/students">
-                <MdChevronLeft size={20} color="#FFF" />
-                VOLTAR
+                <MdClose size={20} color="#FFF" />
+                CANCELAR
               </Link>
             </div>
-            <button type="submit" onClick={handleSubmit}>
+            <button type="submit">
               <MdCheck size={18} color="#FFF" />
               SALVAR
             </button>
@@ -85,7 +89,3 @@ export default function StudentsEdit({ match }) {
     </Container>
   );
 }
-
-// StudentsEdit.propTypes = {
-//   id: PropTypes.element,
-// };
