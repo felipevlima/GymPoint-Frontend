@@ -22,7 +22,6 @@ import { Container, Header, ColumnFilds, InLineFilds } from './styles';
 
 export default function EnrollmentsForm() {
   const schema = Yup.object().shape({
-    student: Yup.string().required('Aluno obrigatório'),
     plan: Yup.string().required('Aluno obrigatório'),
     start_date: Yup.date().required('Data obrigatória'),
   });
@@ -106,18 +105,12 @@ export default function EnrollmentsForm() {
     const studentId = student.value;
     const planId = plan.value;
 
-    try {
-      await api.post('/enrollments', {
-        student_id: studentId,
-        plan_id: planId,
-        start_date: formatDate,
-      });
-      toast.success('Matrícula realizada com sucesso!');
-    } catch (erro) {
-      toast.error('Matrícula já existe no sistema!');
-    } finally {
-      history.push('/enrollments');
-    }
+    await api.post('/enrollments', {
+      student_id: studentId,
+      plan_id: planId,
+      start_date: formatDate,
+    });
+    history.push('/enrollments');
   }
 
   return (
@@ -144,6 +137,7 @@ export default function EnrollmentsForm() {
             name="student"
             options={students}
             setChange={setStudent}
+            onChange={setStudent}
           />
           <InLineFilds>
             <ColumnFilds>
